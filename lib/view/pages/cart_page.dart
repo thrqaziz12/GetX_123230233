@@ -52,38 +52,124 @@ class CartPage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(8),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          product.images[0],
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(
-                            Icons.image_not_supported,
-                            size: 60,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          // Gambar produk
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              product.images[0],
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                Icons.image_not_supported,
+                                size: 60,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      title: Text(
-                        product.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        '\$${product.price.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
-                        onPressed: () => cartController.removeFromCart(index),
-                        tooltip: 'Hapus dari keranjang',
+                          const SizedBox(width: 12),
+                          // Info produk
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Obx(() => Text(
+                                      '\$${(product.price * cartController.getQuantity(product.id)).toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                        color: Colors.blueGrey,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
+                          // Kontrol quantity dan hapus
+                          Column(
+                            children: [
+                              // Tombol hapus
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.red, size: 20),
+                                onPressed: () =>
+                                    cartController.removeFromCart(index),
+                                tooltip: 'Hapus dari keranjang',
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                              const SizedBox(height: 4),
+                              // Baris + qty -
+                              Obx(() => Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Tombol kurangi
+                                      InkWell(
+                                        onTap: () => cartController
+                                            .decreaseQuantity(product.id),
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Container(
+                                          width: 28,
+                                          height: 28,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.blueGrey),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: const Icon(
+                                            Icons.remove,
+                                            size: 16,
+                                            color: Colors.blueGrey,
+                                          ),
+                                        ),
+                                      ),
+                                      // Tampilan jumlah
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8),
+                                        child: Text(
+                                          '${cartController.getQuantity(product.id)}',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      // Tombol tambah
+                                      InkWell(
+                                        onTap: () => cartController
+                                            .increaseQuantity(product.id),
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Container(
+                                          width: 28,
+                                          height: 28,
+                                          decoration: BoxDecoration(
+                                            color: Colors.blueGrey,
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add,
+                                            size: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -118,13 +204,13 @@ class CartPage extends StatelessWidget {
                         ),
                       ),
                       Obx(() => Text(
-                        '\$${cartController.totalPrice.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey,
-                        ),
-                      )),
+                            '\$${cartController.totalPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueGrey,
+                            ),
+                          )),
                     ],
                   ),
                   const SizedBox(height: 12),
