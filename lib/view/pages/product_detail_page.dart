@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../controller/cart_controller.dart';
 import '../../model/product.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -7,6 +8,9 @@ class ProductDetailPage extends StatelessWidget {
 
   // Ambil data dari Get.arguments yang dikirim saat navigasi
   final Product product = Get.arguments as Product;
+
+  // Dependency injection: ambil CartController yang sudah di-put permanent
+  final CartController cartController = Get.find<CartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +76,43 @@ class ProductDetailPage extends StatelessWidget {
                       .toList(),
                 ),
               ),
+              SizedBox(height: 20),
+
+              // Tombol "Tambahkan ke Keranjang"
+              // Obx() memantau cartController.isInCart() secara reaktif
+              Obx(() => SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cartController.isInCart(product)
+                        ? Colors.grey.shade400
+                        : Colors.blueGrey,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  icon: Icon(
+                    cartController.isInCart(product)
+                        ? Icons.check_circle_outline
+                        : Icons.shopping_cart_outlined,
+                  ),
+                  label: Text(
+                    cartController.isInCart(product)
+                        ? 'Sudah di Keranjang'
+                        : 'Tambahkan ke Keranjang',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onPressed: cartController.isInCart(product)
+                      ? null
+                      : () => cartController.addToCart(product),
+                ),
+              )),
+
               SizedBox(height: 20),
               Text(
                 "Reviews",
