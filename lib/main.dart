@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
+
+import 'routes/app_pages.dart';
+import 'routes/app_routes.dart';
+import 'view/pages/product_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return GetMaterialApp(
       title: 'GetX App',
       debugShowCheckedModeBanner: false,
-      // home: ProductPage(),
+      initialRoute: AppRoutes.products, // route awal aplikasi
+      getPages: AppPages.routes, // daftar semua route
     );
   }
 }
